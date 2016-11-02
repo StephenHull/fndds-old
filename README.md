@@ -1,2 +1,2 @@
 # FNDDS
-Utility to create a database for the FNDDS data from USDA
+A utility to create and populate a database with the FNDDS data from USDA.
