@@ -1,0 +1,1 @@
+﻿CREATE INDEX IDX_MainFoodDescription ON [dbo].MainFoodDesc (MainFoodDescription)

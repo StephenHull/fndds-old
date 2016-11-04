@@ -1,0 +1,1 @@
+﻿CREATE INDEX IDX_ModificationDescription ON [dbo].ModDesc (ModificationDescription)
