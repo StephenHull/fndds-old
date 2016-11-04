@@ -1,0 +1,10 @@
+*.publish.xml
+*.suo
+*.user
+
+*.dbmdl
+*.jfm
+
+[Bb]in/
+[Oo]bj/
+[Ll]og/
