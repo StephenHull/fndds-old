@@ -1,0 +1,1 @@
+﻿CREATE INDEX IDX_NutrientValue ON [dbo].ModNutVal (NutrientValue)

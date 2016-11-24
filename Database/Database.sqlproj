@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Database</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{d56780f1-659f-4cf6-adb1-bc1b05779a37}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>FnndsDatabase</RootNamespace>
+    <AssemblyName>FnndsDatabase</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+    <TargetFrameworkProfile />
+    <TargetDatabase>FnddsDatabase</TargetDatabase>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Tables" />
+    <Folder Include="Tables\Indices" />
+    <Folder Include="Tables\ForeignKeys" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Tables\MainFoodDesc.sql" />
+    <Build Include="Tables\Indices\MainFoodDesc.MainFoodDescription.sql" />
+    <Build Include="Tables\ModDesc.sql" />
+    <Build Include="Tables\Indices\ModDesc.ModificationDescription.sql" />
+    <Build Include="Tables\ForeignKeys\ModDesc.MainFoodDesc.sql" />
+    <Build Include="Tables\FoodPortionDesc.sql" />
+    <Build Include="Tables\SubcodeDesc.sql" />
+    <Build Include="Tables\FoodWeights.sql" />
+    <Build Include="Tables\Indices\FoodWeights.PortionWeight.sql" />
+    <Build Include="Tables\ForeignKeys\FoodWeights.MainFoodDesc.sql" />
+    <Build Include="Tables\ForeignKeys\FoodWeights.FoodPortionDesc.sql" />
+    <Build Include="Tables\AddFoodDesc.sql" />
+    <Build Include="Tables\Indices\AddFoodDesc.AdditionalFoodDescription.sql" />
+    <Build Include="Tables\ForeignKeys\AddFoodDesc.MainFoodDesc.sql" />
+    <Build Include="Tables\NutDesc.sql" />
+    <Build Include="Tables\MoistNFatAdjust.sql" />
+    <Build Include="Tables\Indices\MoistNFatAdjust.FoodCode.sql" />
+    <Build Include="Tables\ForeignKeys\MoistNFatAdjust.MainFoodDesc.sql" />
+    <Build Include="Tables\FnddsSrLinks.sql" />
+    <Build Include="Tables\Indices\FnddsSrLinks.PortionCode.sql" />
+    <Build Include="Tables\Indices\FnddsSrLinks.SrCode.sql" />
+    <Build Include="Tables\Indices\FnddsSrLinks.Weight.sql" />
+    <Build Include="Tables\ForeignKeys\FnddsSrLinks.FoodPortionDesc.sql" />
+    <Build Include="Tables\ForeignKeys\FnddsSrLinks.MainFoodDesc.sql" />
+    <Build Include="Tables\FnddsNutVal.sql" />
+    <Build Include="Tables\Indices\FnddsNutVal.NutrientValue.sql" />
+    <Build Include="Tables\ForeignKeys\FnddsNutVal.MainFoodDesc.sql" />
+    <Build Include="Tables\ForeignKeys\FnddsNutVal.NutDesc.sql" />
+    <Build Include="Tables\ModNutVal.sql" />
+    <Build Include="Tables\Indices\ModNutVal.NutrientValue.sql" />
+    <Build Include="Tables\ForeignKeys\ModNutVal.MoistNFatAdjust.sql" />
+    <Build Include="Tables\ForeignKeys\ModNutVal.NutDesc.sql" />
+    <Build Include="Tables\NoSaltModNutVal.sql" />
+    <Build Include="Tables\Indices\NoSaltModNut.NutrientValue.sql" />
+    <Build Include="Tables\ForeignKeys\NoSaltModNut.ModNutVal.sql" />
+    <Build Include="Tables\FnddsVersion.sql" />
+    <Build Include="Tables\ForeignKeys\MainFoodDesc.FnddsVersion.sql" />
+    <Build Include="Tables\ForeignKeys\FoodPortionDesc.FnddsVersion.sql" />
+    <Build Include="Tables\ForeignKeys\SubcodeDesc.FnddsVersion.sql" />
+    <Build Include="Tables\ForeignKeys\NutDesc.FnddsVersion.sql" />
+    <Build Include="Tables\ForeignKeys\FoodWeights.SubcodeDesc.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Debug.publish.xml" />
+  </ItemGroup>
+</Project>
