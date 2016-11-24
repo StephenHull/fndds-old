@@ -1,1 +1,0 @@
-﻿CREATE INDEX IDX_PortionWeight ON [dbo].FoodWeights (PortionWeight)
