@@ -7,3 +7,8 @@ FNDDS 2001 - 2002
 
 SubcodeDesc table
 - Update the [Subcode description] column to "Default Gram Weights" where Subcode equals 0.
+
+FNDDS 2003 - 2004
+
+SubcodeDesc table
+- Update the [Subcode description] column to "Default Gram Weights" where Subcode equals 0.
