@@ -5,6 +5,8 @@
 *.dbmdl
 *.jfm
 
+Private.App.config
+
 [Bb]in/
 [Oo]bj/
 [Ll]og/
