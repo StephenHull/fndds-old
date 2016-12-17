@@ -11,13 +11,13 @@ A few source files have invalid data that must be fixed before the data can be l
 
 1\. FNDDS 2001 - 2002
 * For the SubcodeDesc table, update the [Subcode description] column to "Default Gram Weights" where Subcode equals zero (0).
-`UPDATE SubcodeDesc SET [Subcode description] = "Default Gram Weights" WHERE (Subcode = 0;`
+*`UPDATE SubcodeDesc SET [Subcode description] = "Default Gram Weights" WHERE (Subcode = 0);`
 
 2\. FNDDS 2003 - 2004
 * For the SubcodeDesc table, update the [Subcode description] column to "Default Gram Weights" where Subcode equals zero (0).
-`UPDATE SubcodeDesc SET [Subcode description] = "Default Gram Weights" WHERE (Subcode = 0;`
+*`UPDATE SubcodeDesc SET [Subcode description] = "Default Gram Weights" WHERE (Subcode = 0);`
 
 3\. FNDDS 2005 - 2006
 
 * For the SubcodeDesc table, update the [Subcode description] column to "Default Gram Weights" where Subcode equals zero (0).
-`UPDATE SubcodeDesc SET [Subcode description] = "Default Gram Weights" WHERE (Subcode = 0;`
+*`UPDATE SubcodeDesc SET [Subcode description] = "Default Gram Weights" WHERE (Subcode = 0);`
