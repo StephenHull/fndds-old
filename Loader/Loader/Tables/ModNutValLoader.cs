@@ -57,7 +57,7 @@ namespace FnddsLoader.Loader.Tables
 
                 SetModelValues(columns, reader, nutrient);
 
-                var foodCode = Context.ModDesc.Where(x => x.ModificationCode == nutrient.ModificationCode).Select(x => x.FoodCode).Single();
+                var foodCode = Context.ModDesc.Where(x => x.ModificationCode == nutrient.ModificationCode && x.Version == FnddsVersion.Id).Select(x => x.FoodCode).Single();
 
                 nutrient.FoodCode = foodCode;
 
