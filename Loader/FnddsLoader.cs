@@ -56,8 +56,9 @@ namespace FnddsLoader
         /// </summary>
         /// <param name="fnddsVersion">The FNDDS version.</param>
         /// <param name="connString">The connection string for the source database.</param>
+        /// <param name="modConnString">The connection string for the source modification database.</param>
         /// <returns></returns>
-        public async Task<bool> ImportDataAsync(FnddsVersion fnddsVersion, string connString)
+        public async Task<bool> ImportDataAsync(FnddsVersion fnddsVersion, string connString, string modConnString = null)
         {
             using (var context = new FnddsContext())
             {
@@ -97,9 +98,7 @@ namespace FnddsLoader
                         new MoistNFatAdjustLoader(version, connection, context),
                         new AddFoodDescLoader(version, connection, context),
                         new FNDDSSRLinksLoader(version, connection, context),
-                        new FNDDSNutValLoader(version, connection, context),
-                        new ModDescLoader(version, connection, context),
-                        new ModNutValLoader(version, connection, context)
+                        new FNDDSNutValLoader(version, connection, context)
                     };
 
                     foreach (var loader in loaders)
@@ -109,6 +108,38 @@ namespace FnddsLoader
                         if (_isDebugEnabled)
                         {
                             _logger.DebugFormat("Table: {0}, Records: {1}", loader.TableName, recordsLoaded);
+                        }
+                    }
+                }
+
+                var canLoadMods = (version.Id > 8 && version.Id < 64);
+                if (version.Id < 16 && string.IsNullOrEmpty(modConnString) == false)
+                {
+                    canLoadMods = true;
+                    connString = modConnString;
+                    ModNutValLoader.SourceTableName = "ModNut";
+                }
+
+                if (canLoadMods)
+                {
+                    using (var connection = new OleDbConnection(connString))
+                    {
+                        await connection.OpenAsync();
+
+                        var loaders = new List<DataLoader>
+                    {
+                        new ModDescLoader(version, connection, context),
+                        new ModNutValLoader(version, connection, context)
+                    };
+
+                        foreach (var loader in loaders)
+                        {
+                            var recordsLoaded = await loader.LoadAsync();
+
+                            if (_isDebugEnabled)
+                            {
+                                _logger.DebugFormat("Table: {0}, Records: {1}", loader.TableName, recordsLoaded);
+                            }
                         }
                     }
                 }
@@ -132,7 +163,7 @@ namespace FnddsLoader
         /// <param name="args">The command-line arguments.</param>
         public static async Task MainAsync(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length < 2)
             {
                 _logger.Fatal("Missing connand-line arguments.");
 
@@ -141,16 +172,25 @@ namespace FnddsLoader
 
             _logger.DebugFormat("ID: {0}", args[0]);
             _logger.DebugFormat("Local Connection String: {0}", args[1]);
+            if (args.Length == 3)
+            {
+                _logger.DebugFormat("Local Mod Connection String: {0}", args[2]);
+            }
 
             var loader = new FnddsLoader();
 
             var id = -1;
             var connString = string.Empty;
+            var modConnString = string.Empty;
 
             try
             {
                 id = Convert.ToInt32(args[0]);
                 connString = args[1].ToString();
+                if (args.Length == 3)
+                {
+                    modConnString = args[2].ToString();
+                }
             }
             catch (Exception e)
             {
@@ -165,7 +205,7 @@ namespace FnddsLoader
                 Environment.Exit(0);
             }
 
-            await loader.ImportDataAsync(version, connString);
+            await loader.ImportDataAsync(version, connString, modConnString);
         }
 
         public async Task<bool> RemoveDataAsync()

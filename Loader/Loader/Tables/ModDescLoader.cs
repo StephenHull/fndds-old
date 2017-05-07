@@ -97,32 +97,32 @@ namespace FnddsLoader.Loader.Tables
                         SourceName = "[Food code]",
                         DestinationName = "FoodCode",
                         IsOrderBy = true,
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     },
                     new DataColumn
                     {
                         SourceName = "[Modification code]",
                         DestinationName = "ModificationCode",
                         IsOrderBy = true,
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     },
                     new DataColumn
                     {
                         SourceName = "[Start date]",
                         DestinationName = "StartDate",
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     },
                     new DataColumn
                     {
                         SourceName = "[End date]",
                         DestinationName = "EndDate",
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     },
                     new DataColumn
                     {
                         SourceName = "[Modification description]",
                         DestinationName = "ModificationDescription",
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     }
                 };
 

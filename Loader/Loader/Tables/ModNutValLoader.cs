@@ -17,7 +17,7 @@ namespace FnddsLoader.Loader.Tables
         /// <summary>
         /// The table name in the source database.
         /// </summary>
-        private const string SourceTableName = "ModNutVal";
+        public static string SourceTableName = "ModNutVal";
 
         /// <summary>
         /// The logger class.
@@ -102,32 +102,32 @@ namespace FnddsLoader.Loader.Tables
                         SourceName = "[Modification code]",
                         DestinationName = "ModificationCode",
                         IsOrderBy = true,
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     },
                     new DataColumn
                     {
                         SourceName = "[Nutrient code]",
                         DestinationName = "NutrientCode",
                         IsOrderBy = true,
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     },
                     new DataColumn
                     {
                         SourceName = "[Start date]",
                         DestinationName = "StartDate",
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     },
                     new DataColumn
                     {
                         SourceName = "[End date]",
                         DestinationName = "EndDate",
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     },
                     new DataColumn
                     {
                         SourceName = "[Nutrient value]",
                         DestinationName = "NutrientValue",
-                        Versions = new HashSet<int> { 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
                     }
                 };
 
