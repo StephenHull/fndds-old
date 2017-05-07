@@ -91,6 +91,7 @@
     <Compile Include="Loader\Tables\ModDescLoader.cs" />
     <Compile Include="Loader\Tables\ModNutValLoader.cs" />
     <Compile Include="Loader\Tables\MoistNFatAdjustLoader.cs" />
+    <Compile Include="Loader\Tables\NoSaltModNutValLoader.cs" />
     <Compile Include="Loader\Tables\NutDescLoader.cs" />
     <Compile Include="Loader\Tables\FoodPortionDescLoader.cs" />
     <Compile Include="Loader\DataColumn.cs" />

@@ -112,7 +112,7 @@ namespace FnddsLoader
                     }
                 }
 
-                var canLoadMods = (version.Id > 8 && version.Id < 64);
+                var canLoadMods = (version.Id > 1 && version.Id < 64);
                 if (version.Id < 16 && string.IsNullOrEmpty(modConnString) == false)
                 {
                     canLoadMods = true;
@@ -127,10 +127,15 @@ namespace FnddsLoader
                         await connection.OpenAsync();
 
                         var loaders = new List<DataLoader>
-                    {
-                        new ModDescLoader(version, connection, context),
-                        new ModNutValLoader(version, connection, context)
-                    };
+                        {
+                            new ModDescLoader(version, connection, context),
+                            new ModNutValLoader(version, connection, context)
+                        };
+
+                        if (version.Id < 16)
+                        {
+                            loaders.Add(new NoSaltModNutValLoader(version, connection, context));
+                        }
 
                         foreach (var loader in loaders)
                         {
