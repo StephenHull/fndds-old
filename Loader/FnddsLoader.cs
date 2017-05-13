@@ -58,7 +58,7 @@ namespace FnddsLoader
         /// <param name="connString">The connection string for the source database.</param>
         /// <param name="modConnString">The connection string for the source modification database.</param>
         /// <returns></returns>
-        public async Task<bool> ImportDataAsync(FnddsVersion fnddsVersion, string connString, string modConnString = null)
+        public async Task<bool> ImportDataAsync(FnddsVersion fnddsVersion, string connString, string modConnString = null, string equivConnString = null)
         {
             using (var context = new FnddsContext())
             {
@@ -136,6 +136,52 @@ namespace FnddsLoader
                         {
                             loaders.Add(new NoSaltModNutValLoader(version, connection, context));
                         }
+
+                        foreach (var loader in loaders)
+                        {
+                            var recordsLoaded = await loader.LoadAsync();
+
+                            if (_isDebugEnabled)
+                            {
+                                _logger.DebugFormat("Table: {0}, Records: {1}", loader.TableName, recordsLoaded);
+                            }
+                        }
+                    }
+                }
+
+                var canEquivalents = (version.Id > 2 && version.Id < 64);
+                if (canEquivalents)
+                {
+                    if (version.Id == 4)
+                    {
+                        EquivalentLoader.SourceTableName = "FPED_0506";
+                        ModEquivalentLoader.SourceTableName = "FPED_0506";
+                    }
+                    else if (version.Id == 8)
+                    {
+                        EquivalentLoader.SourceTableName = "FPED_0708";
+                        ModEquivalentLoader.SourceTableName = "FPED_0708";
+                    }
+                    else if (version.Id == 16)
+                    {
+                        EquivalentLoader.SourceTableName = "FPED_0910";
+                        ModEquivalentLoader.SourceTableName = "FPED_0910";
+                    }
+                    else if (version.Id == 32)
+                    {
+                        EquivalentLoader.SourceTableName = "FPED_1112";
+                        ModEquivalentLoader.SourceTableName = "FPED_1112";
+                    }
+
+                    using (var connection = new OleDbConnection(equivConnString))
+                    {
+                        await connection.OpenAsync();
+
+                        var loaders = new List<DataLoader>
+                        {
+                            new EquivalentLoader(version, connection, context),
+                            new ModEquivalentLoader(version, connection, context)
+                        };
 
                         foreach (var loader in loaders)
                         {

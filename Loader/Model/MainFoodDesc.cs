@@ -46,6 +46,8 @@ namespace FnddsLoader.Model
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AddFoodDesc> AddFoodDesc { get; set; }
 
+        public virtual Equivalent Equivalent { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FnddsNutVal> FnddsNutVal { get; set; }
 

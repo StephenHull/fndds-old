@@ -94,7 +94,7 @@
     <Build Include="Tables\ForeignKeys\FnddsNutVal.NutDesc.sql" />
     <Build Include="Tables\ModNutVal.sql" />
     <Build Include="Tables\Indices\ModNutVal.NutrientValue.sql" />
-    <Build Include="Tables\ForeignKeys\ModNutVal.MoistNFatAdjust.sql" />
+    <Build Include="Tables\ForeignKeys\ModNutVal.ModDesc.sql" />
     <Build Include="Tables\ForeignKeys\ModNutVal.NutDesc.sql" />
     <Build Include="Tables\NoSaltModNutVal.sql" />
     <Build Include="Tables\Indices\NoSaltModNut.NutrientValue.sql" />
@@ -105,6 +105,10 @@
     <Build Include="Tables\ForeignKeys\SubcodeDesc.FnddsVersion.sql" />
     <Build Include="Tables\ForeignKeys\NutDesc.FnddsVersion.sql" />
     <Build Include="Tables\ForeignKeys\FoodWeights.SubcodeDesc.sql" />
+    <Build Include="Tables\Equivalent.sql" />
+    <Build Include="Tables\ModEquivalent.sql" />
+    <Build Include="Tables\ForeignKeys\Equivalent.MainFoodDesc.sql" />
+    <Build Include="Tables\ForeignKeys\ModEquivalent.ModDesc.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Debug.publish.xml" />

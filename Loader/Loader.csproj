@@ -84,11 +84,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ModEquivalent.cs" />
+    <Compile Include="Model\Equivalent.cs" />
     <Compile Include="FnddsLoader.cs" />
     <Compile Include="Loader\Tables\AddFoodDescLoader.cs" />
+    <Compile Include="Loader\Tables\EquivalentLoader.cs" />
     <Compile Include="Loader\Tables\FNDDSNutValLoader.cs" />
     <Compile Include="Loader\Tables\FNDDSSRLinksLoader.cs" />
     <Compile Include="Loader\Tables\ModDescLoader.cs" />
+    <Compile Include="Loader\Tables\ModEquivalentLoader.cs" />
     <Compile Include="Loader\Tables\ModNutValLoader.cs" />
     <Compile Include="Loader\Tables\MoistNFatAdjustLoader.cs" />
     <Compile Include="Loader\Tables\NoSaltModNutValLoader.cs" />

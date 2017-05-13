@@ -34,5 +34,7 @@ namespace FnddsLoader.Model
         public decimal NutrientValue { get; set; }
 
         public DateTime Created { get; set; }
+
+        public virtual ModNutVal ModNutVal { get; set; }
     }
 }
