@@ -17,43 +17,39 @@ namespace FnddsLoader.Model
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Version { get; set; }
 
-        public decimal? F_TOTAL { get; set; }
-
         public decimal? F_CITMLB { get; set; }
 
         public decimal? F_OTHER { get; set; }
 
         public decimal? F_JUICE { get; set; }
 
-        public decimal? V_TOTAL { get; set; }
+        public decimal? F_TOTAL { get; set; }
 
         public decimal? V_DRKGR { get; set; }
-
-        public decimal? V_REDOR_TOTAL { get; set; }
 
         public decimal? V_REDOR_TOMATO { get; set; }
 
         public decimal? V_REDOR_OTHER { get; set; }
 
-        public decimal? V_STARCHY_TOTAL { get; set; }
+        public decimal? V_REDOR_TOTAL { get; set; }
 
         public decimal? V_STARCHY_POTATO { get; set; }
 
         public decimal? V_STARCHY_OTHER { get; set; }
 
+        public decimal? V_STARCHY_TOTAL { get; set; }
+
         public decimal? V_OTHER { get; set; }
 
-        public decimal? V_LEGUMES { get; set; }
+        public decimal? V_TOTAL { get; set; }
 
-        public decimal? G_TOTAL { get; set; }
+        public decimal? V_LEGUMES { get; set; }
 
         public decimal? G_WHOLE { get; set; }
 
         public decimal? G_REFINED { get; set; }
 
-        public decimal? PF_TOTAL { get; set; }
-
-        public decimal? PF_MPS_TOTAL { get; set; }
+        public decimal? G_TOTAL { get; set; }
 
         public decimal? PF_MEAT { get; set; }
 
@@ -67,6 +63,8 @@ namespace FnddsLoader.Model
 
         public decimal? PF_SEAFD_LOW { get; set; }
 
+        public decimal? PF_MPS_TOTAL { get; set; }
+
         public decimal? PF_EGGS { get; set; }
 
         public decimal? PF_SOY { get; set; }
@@ -75,13 +73,15 @@ namespace FnddsLoader.Model
 
         public decimal? PF_LEGUMES { get; set; }
 
-        public decimal? D_TOTAL { get; set; }
+        public decimal? PF_TOTAL { get; set; }
 
         public decimal? D_MILK { get; set; }
 
         public decimal? D_YOGURT { get; set; }
 
         public decimal? D_CHEESE { get; set; }
+
+        public decimal? D_TOTAL { get; set; }
 
         public decimal? OILS { get; set; }
 
