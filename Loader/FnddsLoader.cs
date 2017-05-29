@@ -57,7 +57,8 @@ namespace FnddsLoader
         /// <param name="fnddsVersion">The FNDDS version.</param>
         /// <param name="connString">The connection string for the source database.</param>
         /// <param name="modConnString">The connection string for the source modification database.</param>
-        /// <returns></returns>
+        /// <param name="equivConnString">The connection string for the source equivalents database.</param>
+        /// <returns>Returns true if the method completes successfully.</returns>
         public async Task<bool> ImportDataAsync(FnddsVersion fnddsVersion, string connString, string modConnString = null, string equivConnString = null)
         {
             using (var context = new FnddsContext())
@@ -149,7 +150,7 @@ namespace FnddsLoader
                     }
                 }
 
-                var canEquivalents = (version.Id > 2 && version.Id < 64);
+                var canEquivalents = (version.Id > 2 && version.Id < 128);
                 if (canEquivalents)
                 {
                     if (version.Id == 4)
@@ -172,6 +173,11 @@ namespace FnddsLoader
                         EquivalentLoader.SourceTableName = "FPED_1112";
                         ModEquivalentLoader.SourceTableName = "FPED_1112";
                     }
+                    else if (version.Id == 64)
+                    {
+                        EquivalentLoader.SourceTableName = "FPED_1314";
+                        ModEquivalentLoader.SourceTableName = "FPED_1314";
+                    }
 
                     using (var connection = new OleDbConnection(equivConnString))
                     {
@@ -179,9 +185,13 @@ namespace FnddsLoader
 
                         var loaders = new List<DataLoader>
                         {
-                            new EquivalentLoader(version, connection, context),
-                            new ModEquivalentLoader(version, connection, context)
+                            new EquivalentLoader(version, connection, context)
                         };
+
+                        if (version.Id < 64)
+                        {
+                            loaders.Add(new ModEquivalentLoader(version, connection, context));
+                        }
 
                         foreach (var loader in loaders)
                         {
@@ -203,6 +213,23 @@ namespace FnddsLoader
         /// The main method. This method simply calls MainAsync.
         /// </summary>
         /// <param name="args">The command-line arguments.</param>
+        /// <remarks>
+        /// Arguments:
+        ///     fnddsVersion {Integer} the FNDDS version
+        ///         1   = FNDDS 1.0 (2001-2002)
+        ///         2   = FNDDS 2.0 (2003-2004)
+        ///         4   = FNDDS 3.0 (2005-2006)
+        ///         8   = FNDDS 4.1 (2007-2008)
+        ///         16  = FNDDS 5.0 (2009-2010)
+        ///         32  = FNDDS 2011-2012
+        ///         64  = FNDDS 2013-2014
+        ///         128 = FNDDS 2015-2016
+        ///     connString {String} the FNDDS Access database OLEDB connection string
+        ///         Example: Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\databases\FNDDS.mdb;Persist Security Info=False;"
+        ///     modConnString {String} the FNDDS Modifications Access database OLEDB connection string
+        ///     equivConnString {String} the FPED Access database OLEDB connection string
+        ///     modEquivConnString
+        /// </remarks>
         static void Main(string[] args)
         {
             MainAsync(args).GetAwaiter().GetResult();
@@ -233,14 +260,20 @@ namespace FnddsLoader
             var id = -1;
             var connString = string.Empty;
             var modConnString = string.Empty;
+            var equivConnString = string.Empty;
 
             try
             {
                 id = Convert.ToInt32(args[0]);
                 connString = args[1].ToString();
-                if (args.Length == 3)
+                if (args.Length > 2)
                 {
                     modConnString = args[2].ToString();
+                }
+
+                if (args.Length > 3)
+                {
+                    equivConnString = args[3].ToString();
                 }
             }
             catch (Exception e)
@@ -256,7 +289,7 @@ namespace FnddsLoader
                 Environment.Exit(0);
             }
 
-            await loader.ImportDataAsync(version, connString, modConnString);
+            await loader.ImportDataAsync(version, connString, modConnString, equivConnString);
         }
 
         public async Task<bool> RemoveDataAsync()

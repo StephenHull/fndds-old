@@ -18,6 +18,12 @@ namespace FnddsLoader.Loader
         public string DestinationName { get; set; }
 
         /// <summary>
+        /// True if this column should be ignored when setting model values to be
+        /// stored in the destination database.
+        /// </summary>
+        public bool IsIgnored { get; set; }
+
+        /// <summary>
         /// True if this column should be included in the ORDER BY statment when
         /// retrieving data from the source database.
         /// </summary>

@@ -114,6 +114,11 @@ namespace FnddsLoader.Loader
 
             foreach (DataColumn column in columns)
             {
+                if (column.IsIgnored)
+                {
+                    continue;
+                }
+
                 var value = reader.GetValue(index++);
                 if (value != null)
                 {
