@@ -84,22 +84,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Loader\DataLoader.cs" />
     <Compile Include="Model\ModEquivalent.cs" />
     <Compile Include="Model\Equivalent.cs" />
     <Compile Include="FnddsLoader.cs" />
     <Compile Include="Loader\Tables\AddFoodDescLoader.cs" />
-    <Compile Include="Loader\Tables\EquivalentLoader.cs" />
     <Compile Include="Loader\Tables\FNDDSNutValLoader.cs" />
     <Compile Include="Loader\Tables\FNDDSSRLinksLoader.cs" />
     <Compile Include="Loader\Tables\ModDescLoader.cs" />
-    <Compile Include="Loader\Tables\ModEquivalentLoader.cs" />
     <Compile Include="Loader\Tables\ModNutValLoader.cs" />
     <Compile Include="Loader\Tables\MoistNFatAdjustLoader.cs" />
     <Compile Include="Loader\Tables\NoSaltModNutValLoader.cs" />
     <Compile Include="Loader\Tables\NutDescLoader.cs" />
     <Compile Include="Loader\Tables\FoodPortionDescLoader.cs" />
-    <Compile Include="Loader\DataColumn.cs" />
-    <Compile Include="Loader\DataLoader.cs" />
     <Compile Include="Loader\Tables\FoodWeightsLoader.cs" />
     <Compile Include="Loader\Tables\MainFoodDescLoader.cs" />
     <Compile Include="Loader\Tables\SubcodeDescLoader.cs" />
@@ -118,9 +115,8 @@
     <Compile Include="Model\NutDesc.cs" />
     <Compile Include="Model\SubcodeDesc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\VersionUtility.cs" />
     <Compile Include="Utility\FileUtility.cs" />
-    <Compile Include="Utility\SqlUtility.cs" />
+    <Compile Include="Utility\VersionUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -130,6 +126,7 @@
     </None>
   </ItemGroup>
   <ItemGroup />
+  <Import Project="..\Base\Base.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

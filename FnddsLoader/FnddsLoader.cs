@@ -1,18 +1,18 @@
-﻿using FnddsLoader.Loader;
-using FnddsLoader.Loader.Tables;
-using FnddsLoader.Model;
-using FnddsLoader.Utility;
-using log4net;
-using log4net.Config;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.OleDb;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FnddsLoader
+﻿namespace FnddsLoader
 {
+    using Loader;
+    using Loader.Tables;
+    using log4net;
+    using log4net.Config;
+    using Model;
+    using System;
+    using System.Collections.Generic;
+    using System.Configuration;
+    using System.Data.OleDb;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Utility;
+
     /// <summary>
     /// This class is a utility for loading FNDDS data from USDA into a database.
     /// </summary>
@@ -149,61 +149,6 @@ namespace FnddsLoader
                         }
                     }
                 }
-
-                var canEquivalents = (version.Id > 2 && version.Id < 128);
-                if (canEquivalents)
-                {
-                    if (version.Id == 4)
-                    {
-                        EquivalentLoader.SourceTableName = "FPED_0506";
-                        ModEquivalentLoader.SourceTableName = "FPED_0506";
-                    }
-                    else if (version.Id == 8)
-                    {
-                        EquivalentLoader.SourceTableName = "FPED_0708";
-                        ModEquivalentLoader.SourceTableName = "FPED_0708";
-                    }
-                    else if (version.Id == 16)
-                    {
-                        EquivalentLoader.SourceTableName = "FPED_0910";
-                        ModEquivalentLoader.SourceTableName = "FPED_0910";
-                    }
-                    else if (version.Id == 32)
-                    {
-                        EquivalentLoader.SourceTableName = "FPED_1112";
-                        ModEquivalentLoader.SourceTableName = "FPED_1112";
-                    }
-                    else if (version.Id == 64)
-                    {
-                        EquivalentLoader.SourceTableName = "FPED_1314";
-                        ModEquivalentLoader.SourceTableName = "FPED_1314";
-                    }
-
-                    using (var connection = new OleDbConnection(equivConnString))
-                    {
-                        await connection.OpenAsync();
-
-                        var loaders = new List<DataLoader>
-                        {
-                            new EquivalentLoader(version, connection, context)
-                        };
-
-                        if (version.Id < 64)
-                        {
-                            loaders.Add(new ModEquivalentLoader(version, connection, context));
-                        }
-
-                        foreach (var loader in loaders)
-                        {
-                            var recordsLoaded = await loader.LoadAsync();
-
-                            if (_isDebugEnabled)
-                            {
-                                _logger.DebugFormat("Table: {0}, Records: {1}", loader.TableName, recordsLoaded);
-                            }
-                        }
-                    }
-                }
             }
 
             return true;
@@ -227,8 +172,6 @@ namespace FnddsLoader
         ///     connString {String} the FNDDS Access database OLEDB connection string
         ///         Example: Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\databases\FNDDS.mdb;Persist Security Info=False;"
         ///     modConnString {String} the FNDDS Modifications Access database OLEDB connection string
-        ///     equivConnString {String} the FPED Access database OLEDB connection string
-        ///     modEquivConnString
         /// </remarks>
         static void Main(string[] args)
         {
@@ -248,7 +191,7 @@ namespace FnddsLoader
                 Environment.Exit(0);
             }
 
-            _logger.DebugFormat("ID: {0}", args[0]);
+            _logger.DebugFormat("FNDDS Version ID: {0}", args[0]);
             _logger.DebugFormat("Local Connection String: {0}", args[1]);
             if (args.Length == 3)
             {
@@ -290,18 +233,6 @@ namespace FnddsLoader
             }
 
             await loader.ImportDataAsync(version, connString, modConnString, equivConnString);
-        }
-
-        public async Task<bool> RemoveDataAsync()
-        {
-            using (var context = new FnddsContext())
-            {
-                context.FnddsVersion.RemoveRange(context.FnddsVersion);
-
-                await context.SaveChangesAsync();
-            }
-
-            return true;
         }
     }
 }

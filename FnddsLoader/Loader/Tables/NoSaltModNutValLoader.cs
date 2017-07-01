@@ -1,27 +1,29 @@
-﻿using FnddsLoader.Model;
-using log4net;
-using System;
-using System.Collections.Generic;
-using System.Data.OleDb;
-using System.Threading.Tasks;
-
-namespace FnddsLoader.Loader.Tables
+﻿namespace FnddsLoader.Loader.Tables
 {
+    using Base.Loader;
+    using log4net;
+    using Model;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.OleDb;
+    using System.Linq;
+    using System.Threading.Tasks;
+
     /// <summary>
     /// This class contains functionaility for loading data for the food modification
-    /// description table.
+    /// nutrient values table with nutrient values adjusted to contain no added salt.
     /// </summary>
-    public class ModDescLoader : DataLoader
+    public class NoSaltModNutValLoader : DataLoader
     {
         /// <summary>
         /// The table name in the source database.
         /// </summary>
-        private const string SourceTableName = "ModDesc";
+        public static string SourceTableName = "NoSaltModNutVal";
 
         /// <summary>
         /// The logger class.
         /// </summary>
-        private readonly ILog _logger = LogManager.GetLogger(typeof(ModDescLoader));
+        private readonly ILog _logger = LogManager.GetLogger(typeof(ModNutValLoader));
 
         /// <summary>
         /// True if the logger is debug endabled; otherwise, false.
@@ -29,12 +31,12 @@ namespace FnddsLoader.Loader.Tables
         private bool _isDebugEnabled = false;
 
         /// <summary>
-        /// Constructs a new ModDescLoader object.
+        /// Constructs a new NoSaltModNutValLoader object.
         /// </summary>
         /// <param name="version">The FNDDS version.</param>
         /// <param name="connection">The connection to the source database.</param>
         /// <param name="context">The destination database context.</param>
-        public ModDescLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
+        public NoSaltModNutValLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
             : base(version, connection, context)
         {
             _isDebugEnabled = _logger.IsDebugEnabled;
@@ -43,41 +45,45 @@ namespace FnddsLoader.Loader.Tables
         /// <inheritdoc />
         public override async Task<int> CreateRecordsAsync(IEnumerable<DataColumn> columns, OleDbDataReader reader)
         {
-            var foods = new List<ModDesc>();
+            var nutrients = new List<ModNutVal>();
 
             var recordCount = 0;
             while (reader.Read())
             {
-                var food = new ModDesc
+                var nutrient = new ModNutVal
                 {
                     Version = FnddsVersion.Id,
                     Created = DateTime.Now
                 };
 
-                SetModelValues(columns, reader, food);
+                SetModelValues(columns, reader, nutrient);
 
-                foods.Add(food);
+                var foodCode = Context.ModDesc.Where(x => x.ModificationCode == nutrient.ModificationCode && x.Version == FnddsVersion.Id).Select(x => x.FoodCode).Single();
+
+                nutrient.FoodCode = foodCode;
+
+                nutrients.Add(nutrient);
 
                 if (_isDebugEnabled)
                 {
-                    _logger.DebugFormat("Table: {0}, Food code: {1}, Modification code: {2}", SourceTableName, food.FoodCode, food.ModificationCode);
+                    _logger.DebugFormat("Table: {0}, Food code: {1}, Modification code: {2}, Nutrient code: {3}", SourceTableName, nutrient.FoodCode, nutrient.ModificationCode, nutrient.NutrientCode);
                 }
 
-                if (foods.Count > BatchSize)
+                if (nutrients.Count > BatchSize)
                 {
-                    Context.ModDesc.AddRange(foods);
+                    Context.ModNutVal.AddRange(nutrients);
 
                     await Context.SaveChangesAsync();
 
-                    foods.Clear();
+                    nutrients.Clear();
                 }
 
                 recordCount++;
             }
 
-            if (foods.Count > 0)
+            if (nutrients.Count > 0)
             {
-                Context.ModDesc.AddRange(foods);
+                Context.ModNutVal.AddRange(nutrients);
 
                 await Context.SaveChangesAsync();
             }
@@ -94,35 +100,35 @@ namespace FnddsLoader.Loader.Tables
                 {
                     new DataColumn
                     {
-                        SourceName = "[Food code]",
-                        DestinationName = "FoodCode",
-                        IsOrderBy = true,
-                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
-                    },
-                    new DataColumn
-                    {
                         SourceName = "[Modification code]",
                         DestinationName = "ModificationCode",
                         IsOrderBy = true,
-                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8 }
+                    },
+                    new DataColumn
+                    {
+                        SourceName = "[Nutrient code]",
+                        DestinationName = "NutrientCode",
+                        IsOrderBy = true,
+                        Versions = new HashSet<int> { 2, 4, 8 }
                     },
                     new DataColumn
                     {
                         SourceName = "[Start date]",
                         DestinationName = "StartDate",
-                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8 }
                     },
                     new DataColumn
                     {
                         SourceName = "[End date]",
                         DestinationName = "EndDate",
-                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
+                        Versions = new HashSet<int> { 2, 4, 8 }
                     },
                     new DataColumn
                     {
-                        SourceName = "[Modification description]",
-                        DestinationName = "ModificationDescription",
-                        Versions = new HashSet<int> { 2, 4, 8, 16, 32 }
+                        SourceName = "[Nutrient value]",
+                        DestinationName = "NutrientValue",
+                        Versions = new HashSet<int> { 2, 4, 8 }
                     }
                 };
 

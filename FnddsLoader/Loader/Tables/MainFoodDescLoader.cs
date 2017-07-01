@@ -1,27 +1,28 @@
-﻿using FnddsLoader.Model;
-using log4net;
-using System;
-using System.Collections.Generic;
-using System.Data.OleDb;
-using System.Threading.Tasks;
-
-namespace FnddsLoader.Loader.Tables
+﻿namespace FnddsLoader.Loader.Tables
 {
+    using Base.Loader;
+    using log4net;
+    using Model;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.OleDb;
+    using System.Threading.Tasks;
+
     /// <summary>
-    /// This class contains functionaility for loading data for the FNDDS nutrient
-    /// values table.
+    /// This class contains functionaility for loading data for the main food
+    /// description table.
     /// </summary>
-    public class FNDDSNutValLoader : DataLoader
+    public class MainFoodDescLoader : DataLoader
     {
         /// <summary>
         /// The table name in the source database.
         /// </summary>
-        private const string SourceTableName = "FNDDSNutVal";
+        private const string SourceTableName = "MainFoodDesc";
 
         /// <summary>
         /// The logger class.
         /// </summary>
-        private readonly ILog _logger = LogManager.GetLogger(typeof(FNDDSNutValLoader));
+        private ILog _logger = LogManager.GetLogger(typeof(MainFoodDescLoader));
 
         /// <summary>
         /// True if the logger is debug endabled; otherwise, false.
@@ -29,12 +30,12 @@ namespace FnddsLoader.Loader.Tables
         private bool _isDebugEnabled = false;
 
         /// <summary>
-        /// Constructs a new FNDDSNutValLoader object.
+        /// Constructs a new MainFoodDescLoader object.
         /// </summary>
         /// <param name="version">The FNDDS version.</param>
         /// <param name="connection">The connection to the source database.</param>
         /// <param name="context">The destination database context.</param>
-        public FNDDSNutValLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
+        public MainFoodDescLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
             : base(version, connection, context)
         {
             _isDebugEnabled = _logger.IsDebugEnabled;
@@ -43,41 +44,41 @@ namespace FnddsLoader.Loader.Tables
         /// <inheritdoc />
         public override async Task<int> CreateRecordsAsync(IEnumerable<DataColumn> columns, OleDbDataReader reader)
         {
-            var nutrients = new List<FnddsNutVal>();
+            var foods = new List<MainFoodDesc>();
 
             var recordCount = 0;
             while (reader.Read())
             {
-                var nutrient = new FnddsNutVal
+                var food = new MainFoodDesc
                 {
                     Version = FnddsVersion.Id,
                     Created = DateTime.Now
                 };
 
-                SetModelValues(columns, reader, nutrient);
+                SetModelValues(columns, reader, food);
 
-                nutrients.Add(nutrient);
+                foods.Add(food);
 
                 if (_isDebugEnabled)
                 {
-                    _logger.DebugFormat("Table: {0}, Food code: {1}, Nutrient code: {2}", SourceTableName, nutrient.FoodCode, nutrient.NutrientCode);
+                    _logger.DebugFormat("Table: {0}, Food code: {1}", SourceTableName, food.FoodCode);
                 }
 
-                if (nutrients.Count > BatchSize)
+                if (foods.Count > BatchSize)
                 {
-                    Context.FnddsNutVal.AddRange(nutrients);
+                    Context.MainFoodDesc.AddRange(foods);
 
                     await Context.SaveChangesAsync();
 
-                    nutrients.Clear();
+                    foods.Clear();
                 }
 
                 recordCount++;
             }
 
-            if (nutrients.Count > 0)
+            if (foods.Count > 0)
             {
-                Context.FnddsNutVal.AddRange(nutrients);
+                Context.MainFoodDesc.AddRange(foods);
 
                 await Context.SaveChangesAsync();
             }
@@ -101,13 +102,6 @@ namespace FnddsLoader.Loader.Tables
                     },
                     new DataColumn
                     {
-                        SourceName = "[Nutrient code]",
-                        DestinationName = "NutrientCode",
-                        IsOrderBy = true,
-                        Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
-                    },
-                    new DataColumn
-                    {
                         SourceName = "[Start date]",
                         DestinationName = "StartDate",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
@@ -120,9 +114,21 @@ namespace FnddsLoader.Loader.Tables
                     },
                     new DataColumn
                     {
-                        SourceName = "[Nutrient value]",
-                        DestinationName = "NutrientValue",
+                        SourceName = "[Main food description]",
+                        DestinationName = "MainFoodDescription",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
+                    },
+                    new DataColumn
+                    {
+                        SourceName = "[Abbreviated description]",
+                        DestinationName = "AbbreviatedMainFoodDescription",
+                        Versions = new HashSet<int> { 1, 2, 4 }
+                    },
+                    new DataColumn
+                    {
+                        SourceName = "[Fortification identifier]",
+                        DestinationName = "FortificationIdentifier",
+                        Versions = new HashSet<int> { 32 }
                     }
                 };
 

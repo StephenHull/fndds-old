@@ -1,27 +1,28 @@
-﻿using FnddsLoader.Model;
-using log4net;
-using System;
-using System.Collections.Generic;
-using System.Data.OleDb;
-using System.Threading.Tasks;
-
-namespace FnddsLoader.Loader.Tables
+﻿namespace FnddsLoader.Loader.Tables
 {
+    using Base.Loader;
+    using log4net;
+    using Model;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.OleDb;
+    using System.Threading.Tasks;
+
     /// <summary>
-    /// This class contains functionaility for loading data for the moisture and fat
-    /// weight adjustment table.
+    /// This class contains functionaility for loading data for the additional food
+    /// description table.
     /// </summary>
-    public class MoistNFatAdjustLoader : DataLoader
+    public class AddFoodDescLoader : DataLoader
     {
         /// <summary>
         /// The table name in the source database.
         /// </summary>
-        private const string SourceTableName = "MoistNFatAdjust";
+        private const string SourceTableName = "AddFoodDesc";
 
         /// <summary>
         /// The logger class.
         /// </summary>
-        private readonly ILog _logger = LogManager.GetLogger(typeof(MoistNFatAdjustLoader));
+        private readonly ILog _logger = LogManager.GetLogger(typeof(AddFoodDescLoader));
 
         /// <summary>
         /// True if the logger is debug endabled; otherwise, false.
@@ -29,12 +30,12 @@ namespace FnddsLoader.Loader.Tables
         private bool _isDebugEnabled = false;
 
         /// <summary>
-        /// Constructs a new MoistNFatAdjustLoader object.
+        /// Constructs a new AddFoodDescLoader object.
         /// </summary>
         /// <param name="version">The FNDDS version.</param>
         /// <param name="connection">The connection to the source database.</param>
         /// <param name="context">The destination database context.</param>
-        public MoistNFatAdjustLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
+        public AddFoodDescLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
             : base(version, connection, context)
         {
             _isDebugEnabled = _logger.IsDebugEnabled;
@@ -43,41 +44,41 @@ namespace FnddsLoader.Loader.Tables
         /// <inheritdoc />
         public override async Task<int> CreateRecordsAsync(IEnumerable<DataColumn> columns, OleDbDataReader reader)
         {
-            var adjusts = new List<MoistNFatAdjust>();
+            var descriptions = new List<AddFoodDesc>();
 
             var recordCount = 0;
             while (reader.Read())
             {
-                var adjust = new MoistNFatAdjust
+                var description = new AddFoodDesc
                 {
                     Version = FnddsVersion.Id,
                     Created = DateTime.Now
                 };
 
-                SetModelValues(columns, reader, adjust);
+                SetModelValues(columns, reader, description);
 
-                adjusts.Add(adjust);
+                descriptions.Add(description);
 
                 if (_isDebugEnabled)
                 {
-                    _logger.DebugFormat("Table: {0}, Food code: {1}", SourceTableName, adjust.FoodCode);
+                    _logger.DebugFormat("Table: {0}, Food code: {1}, Sequence: {2}", SourceTableName, description.FoodCode, description.SeqNum);
                 }
 
-                if (adjusts.Count > BatchSize)
+                if (descriptions.Count > BatchSize)
                 {
-                    Context.MoistNFatAdjust.AddRange(adjusts);
+                    Context.AddFoodDesc.AddRange(descriptions);
 
                     await Context.SaveChangesAsync();
 
-                    adjusts.Clear();
+                    descriptions.Clear();
                 }
 
                 recordCount++;
             }
 
-            if (adjusts.Count > 0)
+            if (descriptions.Count > 0)
             {
-                Context.MoistNFatAdjust.AddRange(adjusts);
+                Context.AddFoodDesc.AddRange(descriptions);
 
                 await Context.SaveChangesAsync();
             }
@@ -101,6 +102,13 @@ namespace FnddsLoader.Loader.Tables
                     },
                     new DataColumn
                     {
+                        SourceName = "[Seq num]",
+                        DestinationName = "SeqNum",
+                        IsOrderBy = true,
+                        Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
+                    },
+                    new DataColumn
+                    {
                         SourceName = "[Start date]",
                         DestinationName = "StartDate",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
@@ -113,20 +121,8 @@ namespace FnddsLoader.Loader.Tables
                     },
                     new DataColumn
                     {
-                        SourceName = "[Moisture change]",
-                        DestinationName = "MoistureChange",
-                        Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
-                    },
-                    new DataColumn
-                    {
-                        SourceName = "[Fat change]",
-                        DestinationName = "FatChange",
-                        Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
-                    },
-                    new DataColumn
-                    {
-                        SourceName = "[Type of fat]",
-                        DestinationName = "TypeOfFat",
+                        SourceName = "[Additional food description]",
+                        DestinationName = "AdditionalFoodDescription",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     }
                 };

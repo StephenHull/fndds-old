@@ -1,26 +1,28 @@
-﻿using FnddsLoader.Model;
-using log4net;
-using System;
-using System.Collections.Generic;
-using System.Data.OleDb;
-using System.Threading.Tasks;
-
-namespace FnddsLoader.Loader.Tables
+﻿namespace FnddsLoader.Loader.Tables
 {
+    using Base.Loader;
+    using log4net;
+    using Model;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.OleDb;
+    using System.Threading.Tasks;
+
     /// <summary>
-    /// This class contains functionaility for loading data for the food weights table.
+    /// This class contains functionaility for loading data for the food portion
+    /// description table.
     /// </summary>
-    public class FoodWeightsLoader : DataLoader
+    public class FoodPortionDescLoader : DataLoader
     {
         /// <summary>
         /// The table name in the source database.
         /// </summary>
-        private const string SourceTableName = "FoodWeights";
+        private const string SourceTableName = "FoodPortionDesc";
 
         /// <summary>
         /// The logger class.
         /// </summary>
-        private readonly ILog _logger = LogManager.GetLogger(typeof(FoodWeightsLoader));
+        private readonly ILog _logger = LogManager.GetLogger(typeof(FoodPortionDescLoader));
 
         /// <summary>
         /// True if the logger is debug endabled; otherwise, false.
@@ -28,12 +30,12 @@ namespace FnddsLoader.Loader.Tables
         private bool _isDebugEnabled = false;
 
         /// <summary>
-        /// Constructs a new FoodWeightsLoader object.
+        /// Constructs a new FoodPortionDescLoader object.
         /// </summary>
         /// <param name="version">The FNDDS version.</param>
         /// <param name="connection">The connection to the source database.</param>
         /// <param name="context">The destination database context.</param>
-        public FoodWeightsLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
+        public FoodPortionDescLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
             : base(version, connection, context)
         {
             _isDebugEnabled = _logger.IsDebugEnabled;
@@ -42,41 +44,41 @@ namespace FnddsLoader.Loader.Tables
         /// <inheritdoc />
         public override async Task<int> CreateRecordsAsync(IEnumerable<DataColumn> columns, OleDbDataReader reader)
         {
-            var weights = new List<FoodWeights>();
+            var portions = new List<FoodPortionDesc>();
 
             var recordCount = 0;
             while (reader.Read())
             {
-                var weight = new FoodWeights
+                var portion = new FoodPortionDesc
                 {
                     Version = FnddsVersion.Id,
                     Created = DateTime.Now
                 };
 
-                SetModelValues(columns, reader, weight);
+                SetModelValues(columns, reader, portion);
 
-                weights.Add(weight);
+                portions.Add(portion);
 
                 if (_isDebugEnabled)
                 {
-                    _logger.DebugFormat("Table: {0}, Food code: {1}, Subcode: {2}, Sequence: {3}, Portion code: {4}", SourceTableName, weight.FoodCode, weight.Subcode, weight.SeqNum, weight.PortionCode);
+                    _logger.DebugFormat("Table: {0}, Portion code: {1}", SourceTableName, portion.PortionCode);
                 }
 
-                if (weights.Count > BatchSize)
+                if (portions.Count > BatchSize)
                 {
-                    Context.FoodWeights.AddRange(weights);
+                    Context.FoodPortionDesc.AddRange(portions);
 
                     await Context.SaveChangesAsync();
 
-                    weights.Clear();
+                    portions.Clear();
                 }
 
                 recordCount++;
             }
 
-            if (weights.Count > 0)
+            if (portions.Count > 0)
             {
-                Context.FoodWeights.AddRange(weights);
+                Context.FoodPortionDesc.AddRange(portions);
 
                 await Context.SaveChangesAsync();
             }
@@ -91,27 +93,6 @@ namespace FnddsLoader.Loader.Tables
             {
                 var columns = new List<DataColumn>
                 {
-                    new DataColumn
-                    {
-                        SourceName = "[Food code]",
-                        DestinationName = "FoodCode",
-                        IsOrderBy = true,
-                        Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
-                    },
-                    new DataColumn
-                    {
-                        SourceName = "[Subcode]",
-                        DestinationName = "Subcode",
-                        IsOrderBy = true,
-                        Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
-                    },
-                    new DataColumn
-                    {
-                        SourceName = "[Seq num]",
-                        DestinationName = "SeqNum",
-                        IsOrderBy = true,
-                        Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
-                    },
                     new DataColumn
                     {
                         SourceName = "[Portion code]",
@@ -133,8 +114,8 @@ namespace FnddsLoader.Loader.Tables
                     },
                     new DataColumn
                     {
-                        SourceName = "[Portion weight]",
-                        DestinationName = "PortionWeight",
+                        SourceName = "[Portion description]",
+                        DestinationName = "PortionDescription",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     },
                     new DataColumn

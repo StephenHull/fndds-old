@@ -1,7 +1,7 @@
-﻿using FnddsLoader.Model;
-
-namespace FnddsLoader.Utility
+﻿namespace FnddsLoader.Utility
 {
+    using Model;
+
     /// <summary>
     /// This class contains utility methods for the FNDDS version.
     /// </summary>

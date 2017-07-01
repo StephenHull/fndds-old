@@ -1,27 +1,28 @@
-﻿using FnddsLoader.Model;
-using log4net;
-using System;
-using System.Collections.Generic;
-using System.Data.OleDb;
-using System.Threading.Tasks;
-
-namespace FnddsLoader.Loader.Tables
+﻿namespace FnddsLoader.Loader.Tables
 {
+    using Base.Loader;
+    using log4net;
+    using Model;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.OleDb;
+    using System.Threading.Tasks;
+
     /// <summary>
-    /// This class contains functionaility for loading data for the main food
+    /// This class contains functionaility for loading data for the nutrient
     /// description table.
     /// </summary>
-    public class MainFoodDescLoader : DataLoader
+    public class NutDescLoader : DataLoader
     {
         /// <summary>
         /// The table name in the source database.
         /// </summary>
-        private const string SourceTableName = "MainFoodDesc";
+        private const string SourceTableName = "NutDesc";
 
         /// <summary>
         /// The logger class.
         /// </summary>
-        private ILog _logger = LogManager.GetLogger(typeof(MainFoodDescLoader));
+        private readonly ILog _logger = LogManager.GetLogger(typeof(NutDescLoader));
 
         /// <summary>
         /// True if the logger is debug endabled; otherwise, false.
@@ -29,12 +30,12 @@ namespace FnddsLoader.Loader.Tables
         private bool _isDebugEnabled = false;
 
         /// <summary>
-        /// Constructs a new MainFoodDescLoader object.
+        /// Constructs a new NutDescLoader object.
         /// </summary>
         /// <param name="version">The FNDDS version.</param>
         /// <param name="connection">The connection to the source database.</param>
         /// <param name="context">The destination database context.</param>
-        public MainFoodDescLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
+        public NutDescLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
             : base(version, connection, context)
         {
             _isDebugEnabled = _logger.IsDebugEnabled;
@@ -43,44 +44,41 @@ namespace FnddsLoader.Loader.Tables
         /// <inheritdoc />
         public override async Task<int> CreateRecordsAsync(IEnumerable<DataColumn> columns, OleDbDataReader reader)
         {
-            var foods = new List<MainFoodDesc>();
+            var nutrients = new List<NutDesc>();
 
             var recordCount = 0;
             while (reader.Read())
             {
-                var food = new MainFoodDesc
+                var nutrient = new NutDesc
                 {
                     Version = FnddsVersion.Id,
                     Created = DateTime.Now
                 };
 
-                SetModelValues(columns, reader, food);
+                SetModelValues(columns, reader, nutrient);
 
-                foods.Add(food);
+                nutrients.Add(nutrient);
 
                 if (_isDebugEnabled)
                 {
-                    _logger.DebugFormat("Table: {0}, Food code: {1}", SourceTableName, food.FoodCode);
+                    _logger.DebugFormat("Table: {0}, Nutrient code: {1}", SourceTableName, nutrient.NutrientCode);
                 }
 
-                if (foods.Count > BatchSize)
+                if (nutrients.Count > BatchSize)
                 {
-                    Context.MainFoodDesc.AddRange(foods);
+                    Context.NutDesc.AddRange(nutrients);
 
                     await Context.SaveChangesAsync();
 
-                    foods.Clear();
+                    nutrients.Clear();
                 }
 
                 recordCount++;
             }
 
-            if (foods.Count > 0)
-            {
-                Context.MainFoodDesc.AddRange(foods);
+            Context.NutDesc.AddRange(nutrients);
 
-                await Context.SaveChangesAsync();
-            }
+            await Context.SaveChangesAsync();
 
             return recordCount;
         }
@@ -94,40 +92,34 @@ namespace FnddsLoader.Loader.Tables
                 {
                     new DataColumn
                     {
-                        SourceName = "[Food code]",
-                        DestinationName = "FoodCode",
+                        SourceName = "[Nutrient code]",
+                        DestinationName = "NutrientCode",
                         IsOrderBy = true,
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     },
                     new DataColumn
                     {
-                        SourceName = "[Start date]",
-                        DestinationName = "StartDate",
+                        SourceName = "[Nutrient description]",
+                        DestinationName = "NutrientDescription",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     },
                     new DataColumn
                     {
-                        SourceName = "[End date]",
-                        DestinationName = "EndDate",
+                        SourceName = "Tagname",
+                        DestinationName = "Tagname",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     },
                     new DataColumn
                     {
-                        SourceName = "[Main food description]",
-                        DestinationName = "MainFoodDescription",
+                        SourceName = "Unit",
+                        DestinationName = "Unit",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     },
                     new DataColumn
                     {
-                        SourceName = "[Abbreviated description]",
-                        DestinationName = "AbbreviatedMainFoodDescription",
-                        Versions = new HashSet<int> { 1, 2, 4 }
-                    },
-                    new DataColumn
-                    {
-                        SourceName = "[Fortification identifier]",
-                        DestinationName = "FortificationIdentifier",
-                        Versions = new HashSet<int> { 32 }
+                        SourceName = "Decimals",
+                        DestinationName = "Decimals",
+                        Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     }
                 };
 

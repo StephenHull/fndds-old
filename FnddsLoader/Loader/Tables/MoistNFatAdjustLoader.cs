@@ -1,27 +1,28 @@
-﻿using FnddsLoader.Model;
-using log4net;
-using System;
-using System.Collections.Generic;
-using System.Data.OleDb;
-using System.Threading.Tasks;
-
-namespace FnddsLoader.Loader.Tables
+﻿namespace FnddsLoader.Loader.Tables
 {
+    using Base.Loader;
+    using log4net;
+    using Model;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.OleDb;
+    using System.Threading.Tasks;
+
     /// <summary>
-    /// This class contains functionaility for loading data for the nutrient
-    /// description table.
+    /// This class contains functionaility for loading data for the moisture and fat
+    /// weight adjustment table.
     /// </summary>
-    public class NutDescLoader : DataLoader
+    public class MoistNFatAdjustLoader : DataLoader
     {
         /// <summary>
         /// The table name in the source database.
         /// </summary>
-        private const string SourceTableName = "NutDesc";
+        private const string SourceTableName = "MoistNFatAdjust";
 
         /// <summary>
         /// The logger class.
         /// </summary>
-        private readonly ILog _logger = LogManager.GetLogger(typeof(NutDescLoader));
+        private readonly ILog _logger = LogManager.GetLogger(typeof(MoistNFatAdjustLoader));
 
         /// <summary>
         /// True if the logger is debug endabled; otherwise, false.
@@ -29,12 +30,12 @@ namespace FnddsLoader.Loader.Tables
         private bool _isDebugEnabled = false;
 
         /// <summary>
-        /// Constructs a new NutDescLoader object.
+        /// Constructs a new MoistNFatAdjustLoader object.
         /// </summary>
         /// <param name="version">The FNDDS version.</param>
         /// <param name="connection">The connection to the source database.</param>
         /// <param name="context">The destination database context.</param>
-        public NutDescLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
+        public MoistNFatAdjustLoader(FnddsVersion version, OleDbConnection connection, FnddsContext context)
             : base(version, connection, context)
         {
             _isDebugEnabled = _logger.IsDebugEnabled;
@@ -43,41 +44,44 @@ namespace FnddsLoader.Loader.Tables
         /// <inheritdoc />
         public override async Task<int> CreateRecordsAsync(IEnumerable<DataColumn> columns, OleDbDataReader reader)
         {
-            var nutrients = new List<NutDesc>();
+            var adjusts = new List<MoistNFatAdjust>();
 
             var recordCount = 0;
             while (reader.Read())
             {
-                var nutrient = new NutDesc
+                var adjust = new MoistNFatAdjust
                 {
                     Version = FnddsVersion.Id,
                     Created = DateTime.Now
                 };
 
-                SetModelValues(columns, reader, nutrient);
+                SetModelValues(columns, reader, adjust);
 
-                nutrients.Add(nutrient);
+                adjusts.Add(adjust);
 
                 if (_isDebugEnabled)
                 {
-                    _logger.DebugFormat("Table: {0}, Nutrient code: {1}", SourceTableName, nutrient.NutrientCode);
+                    _logger.DebugFormat("Table: {0}, Food code: {1}", SourceTableName, adjust.FoodCode);
                 }
 
-                if (nutrients.Count > BatchSize)
+                if (adjusts.Count > BatchSize)
                 {
-                    Context.NutDesc.AddRange(nutrients);
+                    Context.MoistNFatAdjust.AddRange(adjusts);
 
                     await Context.SaveChangesAsync();
 
-                    nutrients.Clear();
+                    adjusts.Clear();
                 }
 
                 recordCount++;
             }
 
-            Context.NutDesc.AddRange(nutrients);
+            if (adjusts.Count > 0)
+            {
+                Context.MoistNFatAdjust.AddRange(adjusts);
 
-            await Context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
+            }
 
             return recordCount;
         }
@@ -91,33 +95,39 @@ namespace FnddsLoader.Loader.Tables
                 {
                     new DataColumn
                     {
-                        SourceName = "[Nutrient code]",
-                        DestinationName = "NutrientCode",
+                        SourceName = "[Food code]",
+                        DestinationName = "FoodCode",
                         IsOrderBy = true,
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     },
                     new DataColumn
                     {
-                        SourceName = "[Nutrient description]",
-                        DestinationName = "NutrientDescription",
+                        SourceName = "[Start date]",
+                        DestinationName = "StartDate",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     },
                     new DataColumn
                     {
-                        SourceName = "Tagname",
-                        DestinationName = "Tagname",
+                        SourceName = "[End date]",
+                        DestinationName = "EndDate",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     },
                     new DataColumn
                     {
-                        SourceName = "Unit",
-                        DestinationName = "Unit",
+                        SourceName = "[Moisture change]",
+                        DestinationName = "MoistureChange",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     },
                     new DataColumn
                     {
-                        SourceName = "Decimals",
-                        DestinationName = "Decimals",
+                        SourceName = "[Fat change]",
+                        DestinationName = "FatChange",
+                        Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
+                    },
+                    new DataColumn
+                    {
+                        SourceName = "[Type of fat]",
+                        DestinationName = "TypeOfFat",
                         Versions = new HashSet<int> { 1, 2, 4, 8, 16, 32, 64 }
                     }
                 };
