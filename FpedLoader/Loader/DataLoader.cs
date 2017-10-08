@@ -31,7 +31,7 @@
         /// <summary>
         /// The destination database context.
         /// </summary>
-        public new FpedContext Context { get; private set; }
+        public FpedContext Context { get; private set; }
 
         /// <summary>
         /// The FNDDS version.

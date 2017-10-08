@@ -109,6 +109,10 @@
     <Build Include="Tables\ModEquivalent.sql" />
     <Build Include="Tables\ForeignKeys\Equivalent.MainFoodDesc.sql" />
     <Build Include="Tables\ForeignKeys\ModEquivalent.ModDesc.sql" />
+    <Build Include="Tables\Commodity.sql" />
+    <Build Include="Tables\ModCommodity.sql" />
+    <Build Include="Tables\ForeignKeys\Commodity.MainFoodDesc.sql" />
+    <Build Include="Tables\ForeignKeys\ModCommodity.ModDesc.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Debug.publish.xml" />

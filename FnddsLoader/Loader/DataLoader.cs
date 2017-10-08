@@ -27,7 +27,7 @@
         /// <summary>
         /// The destination database context.
         /// </summary>
-        public new FnddsContext Context { get; private set; }
+        public FnddsContext Context { get; private set; }
 
         /// <summary>
         /// The FNDDS version.
